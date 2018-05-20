@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Ajax Test</title>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1>Demo 1</h1>
+        <button id="button_json" class="btn btn-primary">Fetch HttpResponse from user_login/all.json</button>
+        <button id="button_html" class="btn btn-primary">Fetch HttpResponse from user_login/all.html</button>
+        <div id="placeholder1" style="margin-top: 50px; border:1px solid silver; padding:10px; width: 1000px;">Placeholder for Ajax content</div>
+        <script>
+            $('#button_json').click(function(){
+                console.log('button json is clicked');
+                $.ajax({
+                    url: '/user_login/all.json',
+                    success: function(serverResponse){
+                        console.log('success, serverResponse:', serverResponse);
+                        $('#placeholder1').html(JSON.stringify(serverResponse))
+                    }
+                    });
+                });
+
+            $('#button_html').click(function(){
+                console.log('button html is clicked');
+                $.ajax({
+                    url: '/user_login/all.html',
+                    success: function(serverResponse){
+                    console.log('success, serverResponse:', serverResponse);
+                    $('#placeholder1').html(serverResponse)
+                     }
+                   });
+                });
+        </script>
+        <h1>Demo 2</h1>
+        <form action="/user_login/find'" method="post">
+            {% csrf_token %}
+            Find all users whose name starts with
+            <input type="text" name="find_name_starts_with" id="ajax_first_name">
+        </form>
+        <div id="placeholder2" style="margin-top: 50px; border:1px solid silver; padding:10px; width: 1000px;">Placeholder for Ajax content</div>
+        <script>
+            $('#ajax_first_name').keyup(function(){
+                console.log('typed something')
+                console.log('parent serialized returned', $(this).parent().serialize())
+                $.ajax({
+                    url: '/user_login/find',
+                    method: 'post',
+                    data: $(this).parent().serialize(),
+                    success: function(serverResponse){
+                        console.log('success, serverResponse', serverResponse)
+                       $('#placeholder2').html(serverResponse)
+                   }
+                   });
+                });
+        </script>
+    <h1>Demo 3 - Ajax Form II</h1>
+    <h2>Create a new user</h2>
+    <form action='/user_login/create' method='post' class='ajax_form' id='create_user_ajax_form'>
+        {% csrf_token %}
+        First Name: <input type='text' name='first_name'/>
+        Last Name: <input type='text' name='last_name'/>
+        Email: <input type='text' name='email_address'/>
+        <input type='submit' value='Submit' />
+    </form>
+    <div id='placeholder3' style='margin-top:35px; border:1px solid silver; width:750px; padding:10px;'>
+        Placeholder for the Ajax Form part II
+    </div>
+    <script>
+      $('#create_user_ajax_form').submit(function(e){
+        e.preventDefault()
+        console.log('Sending Ajax request to', $(this).attr('action'))
+        console.log('Submitting the following data', $(this).serialize())
+        $.ajax({
+          url: $(this).attr('action'), /* Where should this go? */
+          method: 'post', /* Which HTTP verb? */
+          data: $(this).serialize(), /* Any data to send along? */
+          success: function(serverResponse) { /* What code should we run when the server responds? */
+            $('#placeholder3').html(serverResponse)
+          }
+        })
+      });
+    </script>        
+    </body>
+</html>
